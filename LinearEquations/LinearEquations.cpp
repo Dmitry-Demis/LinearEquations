@@ -5,14 +5,9 @@
 #include "MatrixGeneration.h"
 #include <sstream>
 
-const int N = 10;
+const int N = 100;
 const double eps = 1e-4;
-vector<double> ParseStringToArray(const string& s)
-{
-	stringstream stream(s);
-	
-	return { 0.0 };
-}
+ostream& operator<<(ostream& stream, const vector<double>& vec);
 int main()
 {
 	if (!MatrixGeneration()) // Matrix Generation
@@ -63,7 +58,48 @@ int main()
 	}
 
 	//Искомый вектор X и дополнительный
-	vector<double> matrixX(N, 1.0), matrixXX(N, 1.0);
+	vector<double> matrixX(N, 0.0), matrixXX(N, 0.0);
+	bool flag = 1;
+	do
+	{
+		xMax = -1;
+		for (int i = 0; i < N; i++)
+		{
+			sum1 = 0;
+			for (int j = 0; j < N; j++)
+			{
+				if (i != j)
+				{
+					sum1 += a[i][j] * matrixX[j];
+				}
+			}
+			matrixXX[i] = 1.0 / a[i][i] * (b[i] - sum1);
+			if (fabs(matrixXX[i]-matrixX[i])>xMax)
+			{
+				xMax = fabs(matrixXX[i] - matrixX[i]);
+			}			
+
+		}
+		/*xMax = fabs(matrixXX[0] - matrixX[0]);
+		double buf = xMax;
+		for (int i = 1; i < N; i++)
+		{
+			buf = fabs(matrixXX[i] - matrixX[i]);
+			if (xMax < buf)
+			{
+				xMax = buf;
+			}
+
+		}*/
+		//xMax = -1;
+		matrixX = matrixXX;
+	} while (xMax > eps);
+	cout << matrixX;
 	
 }
-
+ostream& operator<<(ostream& stream, const vector<double>& vec)
+{
+	for (const auto& b : vec)
+		stream << b << endl;
+	return stream;
+}
